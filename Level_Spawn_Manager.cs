@@ -24,12 +24,12 @@ public class Level_Spawn_Manager : MonoBehaviour
 
 	private void Start()
 	{
-		InitializeEnemies();
-		EnableOnlyCurrentWave();
+		InitializeEnemies(); // All enemies will be instantiated and their game objects + transforms will be assigned to their respective waves
+		EnableOnlyCurrentWave(); // All enemies will be deactivated and only those which are in "Current Wave" will be kept active
 	}
 
 	private void
-		InitializeEnemies() // Method to initialize enemies in form of waves. When all enemies in the first wave are killed in a level, the second wave will be initiated. Level in completed when all waves are killed
+		InitializeEnemies() // Method to initialize enemies in form of waves.  // All enemies will be instantiated and their game objects + transforms will be assigned to their respective waves
 	{
 		var wavesLengthInLevel = level[0].waves.Length;
 		int i;
@@ -38,7 +38,7 @@ public class Level_Spawn_Manager : MonoBehaviour
 			_currentWaveInLoop = i;
 			level[0].wavesInLevel.Add(level[0].waves[i]);
 			Debug.Log("Instantiating Wave " + _currentWaveInLoop);
-			for (int j = 0; j < level[0].waves[_currentWaveInLoop].enemyType.Length; j++)
+			for (int j = 0; j < level[0].wavesInLevel[_currentWaveInLoop].enemyType.Length; j++)
 			{
 				var E = Instantiate(enemiesVariantsPrefabs[CheckEnemiesType(j)],
 					level[0].waves[_currentWaveInLoop].enemyPosition[j].position,
@@ -50,7 +50,7 @@ public class Level_Spawn_Manager : MonoBehaviour
 	}
 
 	private void
-		EnableOnlyCurrentWave() // A method to check which wave is currently active and how many enemies are left in said wave before initializing next wave
+		EnableOnlyCurrentWave() // A method to check which wave is currently active and how many enemies are left in said wave before initializing next wave. All enemies will be deactivated and only those which are in "Current Wave" will be kept active
 	{
 		_currentWaveToKeepActiveIndex = 0;
 		int i;

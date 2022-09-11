@@ -33,6 +33,7 @@ public class Level_Spawn_Manager : MonoBehaviour
 
 	private void
 		AddWavesToList() // Method to initialize enemies in form of waves. When all enemies in the first wave are killed in a level, the second wave will be initiated. Level in completed when all waves are killed
+	// Adding waves to a seperate list allows for a better control over wave properties at runtime without modifying original waves' properties
 	{
 		var wavesLengthInLevel = level[0].waves.Length;
 		int i;
@@ -45,12 +46,12 @@ public class Level_Spawn_Manager : MonoBehaviour
 
 	private void InitializeEnemies()
 	{
-		waveObjectiveGameObject.text = level[0].wavesInLevel[_currentWaveToKeepActiveIndex].waveObjective;
-		for (int j = 0; j < level[0].wavesInLevel[_currentWaveToKeepActiveIndex].enemyType.Length; j++)
+//		waveObjectiveGameObject.text = level[0].wavesInLevel[_currentWaveToKeepActiveIndex].waveObjective;
+		for (int j = 0; j < level[0].wavesInLevel[_currentWaveToKeepActiveIndex].enemy.Length; j++)
 		{
 			var E = Instantiate(enemiesVariantsPrefabs[CheckEnemiesType(j)],
-				level[0].wavesInLevel[_currentWaveToKeepActiveIndex].enemyPosition[j].position,
-				level[0].waves[_currentWaveToKeepActiveIndex].enemyPosition[j].rotation);
+				level[0].waves[_currentWaveToKeepActiveIndex].enemy[j].enemyPosition.position,
+				level[0].waves[_currentWaveToKeepActiveIndex].enemy[j].enemyPosition.rotation);
 			level[0].wavesInLevel[_currentWaveToKeepActiveIndex].enemiesGameObjectInWave.Add(E.transform);
 		}
 	}
@@ -75,7 +76,7 @@ public class Level_Spawn_Manager : MonoBehaviour
 		if (level[0].wavesInLevel.Count == 0)
 		{
 			Debug.Log("LEVEL COMPLETED");
-			waveObjectiveGameObject.text = "Level Completed";
+//			waveObjectiveGameObject.text = "Level Completed";
 		}
 	}
 
@@ -83,36 +84,24 @@ public class Level_Spawn_Manager : MonoBehaviour
 	private int
 		CheckEnemiesType(int i) // Method to check which enemy type is selected in the editor in a level wave so THAT particular enemy can be instantiated in its respective position using InitializeEnemies() method
 	{
-		switch (level[0].wavesInLevel[_currentWaveToKeepActiveIndex].enemyType[i])
+		switch (level[0].wavesInLevel[_currentWaveToKeepActiveIndex].enemy[i].enemytype)
 		{
-			case EnemyType.AlienSoldier:
+			case Enemy.EnemyType.Soldier:
 				x = 0;
 				return x;
-			case EnemyType.TurnedSoldier:
+			case Enemy.EnemyType.EliteSoldier:
 				x = 1;
 				return x;
-			case EnemyType.Mutant:
+
+			case Enemy.EnemyType.Commander:
 				x = 2;
 				return x;
-			case EnemyType.AlienPlant:
+			case Enemy.EnemyType.Civillian:
 				x = 3;
-				return x;
-			case EnemyType.AlienBoss:
-				x = 4;
 				return x;
 			default:
 				return x;
 		}
-	}
-
-	[Serializable]
-	public enum EnemyType
-	{
-		AlienSoldier,
-		TurnedSoldier,
-		Mutant,
-		AlienPlant,
-		AlienBoss
 	}
 }
 
@@ -120,10 +109,9 @@ public class Level_Spawn_Manager : MonoBehaviour
 public class Wave
 {
 	public string waveObjective;
-	public Level_Spawn_Manager.EnemyType[] enemyType;
-	public Transform[] enemyPosition;
+	public Enemy[] enemy;
 
-	[HideInInspector] public List<Transform>
+	/*[HideInInspector]*/ public List<Transform>
 		enemiesGameObjectInWave; // Each level's waves' enemies gameobjects will be placed in this list according to their waves placement. 
 }
 
@@ -132,7 +120,22 @@ public class Level
 {
 	public Wave[] waves; // Add Enemies Details in this array
 
-
-	[HideInInspector] public List<Wave>
+	/*[HideInInspector]*/ public List<Wave>
 		wavesInLevel; //Total waves in each level will be added to this list to add and maintain functionality control over each wave's properties
+}
+
+[Serializable]
+public class Enemy
+{
+//	public LevelsSpawner.EnemyType[] enemyType; // Add Enemies Type in this  array
+	public enum EnemyType
+	{
+		Soldier,
+		EliteSoldier,
+		Commander,
+		Civillian,
+	}
+
+	public EnemyType enemytype;
+	public Transform enemyPosition;
 }
